@@ -8,7 +8,7 @@ const writeCsvFile = (entityName, fileName, header, records) => {
     fs.mkdirSync(dataDir, { recursive: true });
   }
 
-  const csvFile = path.join(dataDir, `${fileName}.csv`);
+  const csvFile = path.join(dataDir, `${ fileName }.csv`);
 
   const csvWriter = createObjectCsvWriter({
     path: csvFile,
@@ -17,7 +17,7 @@ const writeCsvFile = (entityName, fileName, header, records) => {
 
   csvWriter.writeRecords(records)
     .then(() => {
-      console.log(`Data saved to filePath - ${csvFile}`);
+      console.log(`Data saved to filePath - ${ csvFile }`);
     })
     .catch(error => {
       console.error('Error writing CSV file:', error);

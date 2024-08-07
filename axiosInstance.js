@@ -2,7 +2,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 const url = process.env.URL;
-const clientId = `${process.env.POST_DATA_SPACE}.ziqni.app`;
+const clientId = `${ process.env.DATA_SPACE }.ziqni.app`;
 
 const username = process.env.USER_NAME;
 const password = process.env.PASSWORD;
@@ -21,19 +21,19 @@ const getToken = async () => {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded',
       },
-    })
+    });
 
-    const { access_token } = data
+    const { access_token } = data;
 
     return axios.create({
       baseURL: url,
       headers: {
-        Authorization: `Bearer ${access_token}`,
+        Authorization: `Bearer ${ access_token }`,
         'Content-Type': 'application/json',
       },
     });
   } catch (err) {
-    console.log('GET ERROR =>', err.response);
+    console.log('GET TOKEN ERROR =>', err.response);
   }
 };
 
