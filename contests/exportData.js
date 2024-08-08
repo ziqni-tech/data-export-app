@@ -1,5 +1,7 @@
 const { getToken } = require('../axiosInstance');
 const writeCsvFile = require('../utils/writeCsvFile');
+const getDateRange = require('../utils/dateRange');
+const { greaterThan, lessThan } = require('../utils/queryData');
 
 const entityName = 'contests';
 
@@ -19,13 +21,15 @@ const exportEntrantsData = async () => {
       }
     ];
 
+    const dateRange = getDateRange(greaterThan, lessThan);
+
     do {
       const api = await getToken();
 
       const { data: resultsData } = await api.post('/competitions/query', {
         limit,
         skip,
-        must
+        must,
       });
 
       const competitions = resultsData.results;
@@ -40,7 +44,20 @@ const exportEntrantsData = async () => {
         let contestsReceived = 0;
         let totalContestsFound = 1;
 
-        //scheduledEndDate:"2024-08-10T00:00:00.000Z"
+        const rangeFilter = dateRange
+          ? [
+            {
+              queryField: 'options.scheduledDates.end',
+              gt: dateRange.greaterThan,
+              constraints: []
+            },
+            {
+              queryField: 'options.scheduledDates.end',
+              lt: dateRange.lessThan,
+              constraints: []
+            }
+          ]
+          : [];
 
         do {
           const { data: contestsData } = await api.post('/contests/query', {
@@ -53,11 +70,8 @@ const exportEntrantsData = async () => {
                 queryField: 'status',
                 queryValues: ['Finalised', 'Finished']
               },
-              // {
-              //   queryFields: ['scheduledEndDate'],
-              //   queryValue: '2024-08-10'
-              // }
             ],
+            range: rangeFilter,
             limit: 20,
             skip: contestsSkip
           });
@@ -98,6 +112,7 @@ const exportEntrantsData = async () => {
                   competitionName: competition.name,
                   contestId: contest.id,
                   contestName: contest.name,
+                  scheduledEndDate: contest.scheduledEndDate,
                   entrantAction: entrant.entrantAction,
                   entrantStatus: entrant.entrantStatus,
                   memberId: entrant.memberId
@@ -133,12 +148,13 @@ const exportEntrantsData = async () => {
       { id: 'competitionName', title: 'Competition Name' },
       { id: 'contestId', title: 'Contest ID' },
       { id: 'contestName', title: 'Contest Name' },
+      { id: 'scheduledEndDate', title: 'Contest Scheduled End Date' },
       { id: 'entrantAction', title: 'Entrant Action' },
       { id: 'entrantStatus', title: 'Entrant Status' },
       { id: 'memberId', title: 'Member ID' }
     ], allEntrants);
   } catch (e) {
-    console.error('Fetch competitions error => ', e.response.data.errors);
+    console.error('Fetch competitions error => ', e);
   }
 };
 
@@ -157,6 +173,8 @@ const exportAwardsData = async () => {
         queryValues: ['Active', 'Finished', 'Finalised']
       }
     ];
+
+    const dateRange = getDateRange(greaterThan, lessThan);
 
     do {
       const api = await getToken();
@@ -178,6 +196,21 @@ const exportAwardsData = async () => {
         let contestsReceived = 0;
         let totalContestsFound = 1;
 
+        const rangeFilter = dateRange
+          ? [
+            {
+              queryField: 'options.scheduledDates.end',
+              gt: dateRange.greaterThan,
+              constraints: []
+            },
+            {
+              queryField: 'options.scheduledDates.end',
+              lt: dateRange.lessThan,
+              constraints: []
+            }
+          ]
+          : [];
+
         do {
           const { data: contestsData } = await api.post('/contests/query', {
             must: [
@@ -190,6 +223,7 @@ const exportAwardsData = async () => {
                 queryValues: ['Finalised', 'Finished']
               }
             ],
+            range: rangeFilter,
             limit: 20,
             skip: contestsSkip
           });
@@ -234,6 +268,7 @@ const exportAwardsData = async () => {
                   competitionName: competition.name,
                   contestId: contest.id,
                   contestName: contest.name,
+                  scheduledEndDate: contest.scheduledEndDate,
                   awardId: award.id,
                   memberId: award.memberId,
                   rewardId: award.rewardId,
@@ -275,6 +310,7 @@ const exportAwardsData = async () => {
       { id: 'competitionName', title: 'Competition Name' },
       { id: 'contestId', title: 'Contest ID' },
       { id: 'contestName', title: 'Contest Name' },
+      { id: 'scheduledEndDate', title: 'Contest Scheduled End Date' },
       { id: 'awardId', title: 'Award ID' },
       { id: 'memberId', title: 'Member ID' },
       { id: 'rewardId', title: 'Reward ID' },
@@ -286,10 +322,9 @@ const exportAwardsData = async () => {
       { id: 'status', title: 'Status' }
     ], allAwards);
   } catch (e) {
-    console.error('Fetch competitions error => ', e.response.data.errors);
+    console.error('Fetch competitions error => ', e);
   }
 };
-
 
 const args = process.argv.slice(2);
 

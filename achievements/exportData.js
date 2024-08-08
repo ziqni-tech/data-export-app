@@ -105,7 +105,7 @@ const exportEntrantsData = async () => {
       { id: 'memberId', title: 'Member ID' }
     ], allEntrants);
   } catch (e) {
-    console.error('Fetch Achievements error => ', e.response.data.errors);
+    console.error('Fetch Achievements error => ', e);
   }
 };
 
@@ -227,7 +227,7 @@ const exportAwardsData = async () => {
       { id: 'status', title: 'Status' }
     ], allAwards);
   } catch (e) {
-    console.error('Fetch Achievements error => ', e.response.data.errors);
+    console.error('Fetch Achievements error => ', e);
   }
 };
 

@@ -56,3 +56,37 @@ To export data, follow these steps:
    - `exportedData/contests/awards.csv`
    - `exportedData/contests/entrants.csv`
 
+### Configuring Date Range for Contests
+
+For contests, you can specify a date range for `scheduledEndDate` in the `queryData.js` file located in the `utils` directory. This allows you to filter the data based on this date range.
+
+1. Open the `queryData.js` file:
+   ```javascript
+   // queryData.js
+   const greaterThan = '2024-05-10T00:00:00Z';
+   const lessThan = '2024-05-11T23:59:59Z';
+
+   module.exports = {
+     greaterThan,
+     lessThan
+   };
+   ```
+2. **Set** `greaterThan` **to the start of the date range.**
+3. **Set** `lessThan` **to the end of the date range.**
+4. **If you don't want to apply a date range and want to retrieve all data, you can set** `greaterThan` **and** `lessThan` **to empty strings.**
+
+   The `getDateRange` function will process these values:
+
+   ```javascript
+   // utils/getDateRange.js
+   module.exports = function getDateRange(greaterThan, lessThan) {
+     if (!greaterThan || !lessThan) {
+       return null;
+     }
+     return {
+       greaterThan: new Date(greaterThan),
+       lessThan: new Date(lessThan)
+     };
+   };
+   ```
+
