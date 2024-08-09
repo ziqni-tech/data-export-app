@@ -1,13 +1,8 @@
-const axios = require('axios');
-require('dotenv').config();
+import axios from 'axios';
 
-const url = process.env.URL;
-const clientId = `${ process.env.DATA_SPACE }.ziqni.app`;
+export const getToken = async (dataSpace, username, password) => {
+  const clientId = `${ dataSpace }.ziqni.app`;
 
-const username = process.env.USER_NAME;
-const password = process.env.PASSWORD;
-
-const getToken = async () => {
   try {
     const { data } = await axios({
       method: 'POST',
@@ -26,7 +21,7 @@ const getToken = async () => {
     const { access_token } = data;
 
     return axios.create({
-      baseURL: url,
+      baseURL: 'https://api.ziqni.com',
       headers: {
         Authorization: `Bearer ${ access_token }`,
         'Content-Type': 'application/json',
@@ -37,4 +32,3 @@ const getToken = async () => {
   }
 };
 
-module.exports = { getToken };

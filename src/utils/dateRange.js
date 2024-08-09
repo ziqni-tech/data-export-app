@@ -1,4 +1,4 @@
-module.exports = function getDateRange(greaterThan, lessThan) {
+export const getDateRange = (greaterThan, lessThan) => {
   if (!greaterThan || !lessThan) {
     return null;
   }

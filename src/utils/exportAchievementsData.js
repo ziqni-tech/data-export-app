@@ -1,9 +1,9 @@
-const { getToken } = require('../axiosInstance');
-const writeCsvFile = require('../utils/writeCsvFile');
+import { getToken }  from '../axiosInstance';
+import { writeCsvFile } from './writeCsvFile';
 
 const entityName = 'achievements';
 
-const exportEntrantsData = async () => {
+export const exportEntrantsDataForAchievements = async (dataSpace, username, password) => {
   try {
     const allAchievements = [];
     const allEntrants = [];
@@ -21,7 +21,7 @@ const exportEntrantsData = async () => {
       ];
 
     do {
-      const api = await getToken();
+      const api = await getToken(dataSpace, username, password);
 
       const { data: resultsData } = await api.post('/achievements/query', {
         limit,
@@ -109,7 +109,7 @@ const exportEntrantsData = async () => {
   }
 };
 
-const exportAwardsData = async () => {
+export const exportAwardsDataForAchievements = async (dataSpace, username, password) => {
   try {
     const allAchievements = [];
     const allAwards = [];
@@ -127,7 +127,7 @@ const exportAwardsData = async () => {
       ];
 
     do {
-      const api = await getToken();
+      const api = await getToken(dataSpace, username, password);
 
       const { data: resultsData } = await api.post('/achievements/query', {
         limit,
@@ -231,18 +231,3 @@ const exportAwardsData = async () => {
   }
 };
 
-const args = process.argv.slice(2);
-
-if (args.length > 0) {
-  switch (args[0]) {
-    case 'getAwards':
-      exportAwardsData();
-      break;
-    case 'getEntrants':
-      exportEntrantsData();
-      break;
-  }
-} else {
-  console.log('You must specify the function name (create / transform / fetch) in the command line argument! ' +
-    'For example - node fileName.js create');
-}

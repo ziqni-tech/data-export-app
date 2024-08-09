@@ -1,11 +1,10 @@
-const { getToken } = require('../axiosInstance');
-const writeCsvFile = require('../utils/writeCsvFile');
-const getDateRange = require('../utils/dateRange');
-const { greaterThan, lessThan } = require('../utils/queryData');
+import { getToken }  from '../axiosInstance';
+import { writeCsvFile } from './writeCsvFile';
+import { getDateRange } from './dateRange';
 
 const entityName = 'contests';
 
-const exportEntrantsData = async () => {
+export const exportEntrantsDataForContests = async (dataSpace, username, password, greaterThan, lessThan) => {
   try {
     const allCompetitions = [];
     const allEntrants = [];
@@ -24,7 +23,7 @@ const exportEntrantsData = async () => {
     const dateRange = getDateRange(greaterThan, lessThan);
 
     do {
-      const api = await getToken();
+      const api = await getToken(dataSpace, username, password);
 
       const { data: resultsData } = await api.post('/competitions/query', {
         limit,
@@ -158,7 +157,7 @@ const exportEntrantsData = async () => {
   }
 };
 
-const exportAwardsData = async () => {
+export const exportAwardsDataForContests = async (dataSpace, username, password, greaterThan, lessThan) => {
   try {
     const allCompetitions = [];
     const allAwards = [];
@@ -177,7 +176,7 @@ const exportAwardsData = async () => {
     const dateRange = getDateRange(greaterThan, lessThan);
 
     do {
-      const api = await getToken();
+      const api = await getToken(dataSpace, username, password);
 
       const { data: resultsData } = await api.post('/competitions/query', {
         limit,
@@ -326,18 +325,3 @@ const exportAwardsData = async () => {
   }
 };
 
-const args = process.argv.slice(2);
-
-if (args.length > 0) {
-  switch (args[0]) {
-    case 'getAwards':
-      exportAwardsData();
-      break;
-    case 'getEntrants':
-      exportEntrantsData();
-      break;
-  }
-} else {
-  console.log('You must specify the function name (create / transform / fetch) in the command line argument! ' +
-    'For example - node fileName.js create');
-}
