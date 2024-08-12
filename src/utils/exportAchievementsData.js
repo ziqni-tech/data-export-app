@@ -1,4 +1,4 @@
-import { getToken }  from '../axiosInstance';
+import { getApiInstance, stopTokenRefresh }  from '../axiosInstance';
 import { writeCsvFile } from './writeCsvFile';
 
 const entityName = 'achievements';
@@ -21,7 +21,7 @@ export const exportEntrantsDataForAchievements = async (dataSpace, username, pas
       ];
 
     do {
-      const api = await getToken(dataSpace, username, password);
+      const api = await getApiInstance(dataSpace, username, password);
 
       const { data: resultsData } = await api.post('/achievements/query', {
         limit,
@@ -104,8 +104,10 @@ export const exportEntrantsDataForAchievements = async (dataSpace, username, pas
       { id: 'entrantStatus', title: 'Entrant Status' },
       { id: 'memberId', title: 'Member ID' }
     ], allEntrants);
+    stopTokenRefresh();
   } catch (e) {
     console.error('Fetch Achievements error => ', e);
+    stopTokenRefresh();
   }
 };
 
@@ -127,7 +129,7 @@ export const exportAwardsDataForAchievements = async (dataSpace, username, passw
       ];
 
     do {
-      const api = await getToken(dataSpace, username, password);
+      const api = await getApiInstance(dataSpace, username, password);
 
       const { data: resultsData } = await api.post('/achievements/query', {
         limit,
@@ -226,8 +228,10 @@ export const exportAwardsDataForAchievements = async (dataSpace, username, passw
       { id: 'memberRefId', title: 'Member Ref ID' },
       { id: 'status', title: 'Status' }
     ], allAwards);
+    stopTokenRefresh();
   } catch (e) {
     console.error('Fetch Achievements error => ', e);
+    stopTokenRefresh();
   }
 };
 

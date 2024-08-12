@@ -1,4 +1,4 @@
-import { getToken }  from '../axiosInstance';
+import { getApiInstance, stopTokenRefresh }  from '../axiosInstance';
 import { writeCsvFile } from './writeCsvFile';
 import { getDateRange } from './dateRange';
 
@@ -23,7 +23,7 @@ export const exportEntrantsDataForContests = async (dataSpace, username, passwor
     const dateRange = getDateRange(greaterThan, lessThan);
 
     do {
-      const api = await getToken(dataSpace, username, password);
+      const api = await getApiInstance(dataSpace, username, password);
 
       const { data: resultsData } = await api.post('/competitions/query', {
         limit,
@@ -152,8 +152,10 @@ export const exportEntrantsDataForContests = async (dataSpace, username, passwor
       { id: 'entrantStatus', title: 'Entrant Status' },
       { id: 'memberId', title: 'Member ID' }
     ], allEntrants);
+    stopTokenRefresh();
   } catch (e) {
     console.error('Fetch competitions error => ', e);
+    stopTokenRefresh();
   }
 };
 
@@ -176,7 +178,7 @@ export const exportAwardsDataForContests = async (dataSpace, username, password,
     const dateRange = getDateRange(greaterThan, lessThan);
 
     do {
-      const api = await getToken(dataSpace, username, password);
+      const api = await getApiInstance(dataSpace, username, password);
 
       const { data: resultsData } = await api.post('/competitions/query', {
         limit,
@@ -320,8 +322,11 @@ export const exportAwardsDataForContests = async (dataSpace, username, password,
       { id: 'memberRefId', title: 'Member Ref ID' },
       { id: 'status', title: 'Status' }
     ], allAwards);
+
+    stopTokenRefresh();
   } catch (e) {
     console.error('Fetch competitions error => ', e);
+    stopTokenRefresh();
   }
 };
 
